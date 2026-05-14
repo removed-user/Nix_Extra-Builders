@@ -11,12 +11,16 @@
   };
 
   outputs = inputs @ {flake-parts, ...}:
+    let 
+Builders =  import ./functions/default.nix;
+    in
     flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [];
-      systems = ["x86_64-linux"];
-      flake.flakeModules.default = ./functions.nix;
+      # systems = ["x86_64-linux"];
+
+      flake.flakeModules.default = Builders;
+     imports = [ Builders ];
       perSystem = {
-        system,
+        # system,
         config,
         self',
         inputs',
@@ -28,7 +32,6 @@
         # module parameters provide easy access to attributes of the same
         # system.
 
-        packages.bootstrap-tools = pkgs.bootstrapTools;
       };
       flake = {
         # The usual flake attributes can be defined here, including system-
