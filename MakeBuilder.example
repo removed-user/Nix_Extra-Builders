@@ -1,0 +1,25 @@
+# modules/apps/my-c-app.nix
+{ config, pkgs, ... }:
+
+let
+  # Extract the builder without using relative paths (e.g., ../../lib)
+  mkMakePkg = config.flake.lib.mkMakePkg pkgs;
+in
+{
+  perSystem = { system, ... }: {
+    packages.my-c-app = mkMakePkg {
+      pname = "my-c-app";
+      version = "2.1.0";
+      src = ./.;
+
+      # This appends to the preset O3/Wall flags
+      NIX_CFLAGS_COMPILE = "-D_GNU_SOURCE -march=native";
+
+      # This appends to the preset PREFIX and CC flags
+      makeFlags = [ "ENABLE_FEATURE_X=1" ];
+
+      # Add extra specific libraries to the runtime dependencies
+      buildInputs = [ pkgs.zlib pkgs.openssl ];
+    };
+  };
+}
