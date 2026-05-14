@@ -2,8 +2,8 @@
   perSystem = {pkgs, ...}: {
     _module.args.Builders = {
 
-MkMakeBuilder = ./MkMakeBuilder.nix;
-MkMesonPkg =    ./MkMesonPkg.nix;
+MkMakeBuilder = import ./MkMakeBuilder.nix;
+MkMesonPkg =    import ./MkMesonPkg.nix;
     };
   };
 }
