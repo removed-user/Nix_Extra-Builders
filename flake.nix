@@ -10,11 +10,8 @@
     };
   };
 
-  outputs = inputs @ {
-    flake-parts,
-    ...
-  }: let
-    Builders = import ./functions/default.nix;
+  outputs = inputs @ {flake-parts, ...}: let
+    Builders = import ./flakeModule.nix;
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
       flake.flakeModules.default = Builders;
