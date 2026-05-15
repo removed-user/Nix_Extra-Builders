@@ -20,10 +20,7 @@
       // {
         # 3. Secure core build tools and seamlessly append package-specific tools
         nativeBuildInputs =
-          [
-            pkgs.gnumake
-            pkgs.pkg-config
-          ]
+          [pkgs.gnumake pkgs.pkg-config]
           ++ (attrs.nativeBuildInputs or []);
 
         # 4. Enforce standard installation paths while appending user-defined variables

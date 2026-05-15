@@ -1,6 +1,6 @@
 {pkgs, ...}: let
   # Reusable function for cross-distribution tarballs
-  tarZstdPackage = pkg:
+  MkArchPkg = pkg:
     pkgs.stdenv.mkDerivation {
       name = "${pkg.pname or "package"}-${pkg.version or "output"}-generic-tar";
 
@@ -13,14 +13,14 @@
       dontStrip = true;
 
       buildCommand = ''
-        # 1. Setup isolated workspace to strip Nix traces safely
-        mkdir -p workspace
-        cp -vR ${pkg}/* workspace/
-        chmod -R +w workspace/
+        # 1. Setup isolated PKGDIR to strip Nix traces safely
+        mkdir -p PKGDIR
+        cp -vR ${pkg}/* PKGDIR/
+        chmod -R +w PKGDIR/
 
         # 2. Convert hardcoded /nix/store paths to portable $ORIGIN lookups
         # Loops through all executables/libraries and strips store paths
-        find workspace/ -type f -exec sh -c '
+        find PKGDIR/ -type f -exec sh -c '
           if file "$1" | grep -qE "ELF|executable|shared object"; then
             echo "Making ELF portable: $1"
             # Clear out absolute store rpaths and point to relative libs
@@ -33,9 +33,9 @@
         # 3. Create clean final output directory inside the store
         mkdir -p $out
 
-        # 4. Tar and compress the cleaned workspace (purely relative files)
+        # 4. Tar and compress the cleaned PKGDIR (purely relative files)
         # No internal symlinks will point to /nix/store
-        tar -I zstd -cf $out/${pkg.pname or "archive"}.pkg.tar.zst -C workspace .
+        tar -I zstd -cf $out/${pkg.pname or "archive"}.pkg.tar.zst -C PKGDIR .
       '';
     };
 
@@ -52,4 +52,4 @@
     '';
   };
 in
-  tarZstdPackage myPackage
+  MkArchPkg myPackage

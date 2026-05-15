@@ -1,5 +1,7 @@
 # Example Usage
 
+`flake.nix`
+
 >`Add to inputs`
 ```
 {
@@ -19,6 +21,8 @@
     imports = [ inputs.Builders.flakeModule ];
     systems = [something];
 ```
+>`expects that it inherits the pkgs argument`
+```
     perSystem = { config, pkgs, ... }: {
       packages.default = config.Builders.mkMesonPkg {
         name = "my-cool-app";
@@ -26,5 +30,20 @@
         buildInputs = [ pkgs.glib ];
       };
     };
+ ```
   };
 }
+
+## Functions
+> MkMakeBuilder.nix
+        nativeBuildInputs = [ pkgs.gnumake pkgs.pkg-config ];
+
+> MkMesonPkg.nix
+        nativeBuildInputs = [pkgs.meson pkgs.ninja];
+
+> MkArchPkg.nix
+      nativeBuildInputs = [pkgs.zstd pkgs.patchelf];
+
+All Builders then add
+          ++ (attrs.nativeBuildInputs or []);
+          So you can add/append to the list within your build function
