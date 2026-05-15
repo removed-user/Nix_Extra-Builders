@@ -1,0 +1,35 @@
+{ lib, ... }:
+
+let
+  # Path to your functions directory
+  functionsDir = ./functions;
+
+  # Read and filter the directory for .nix files
+  dirContents = builtins.readDir functionsDir;
+  nixFiles = lib.filterAttrs 
+    (name: type: type == "regular" && lib.hasSuffix ".nix" name) 
+    dirContents;
+
+  # Strip the ".nix" extension to create clean attribute names
+  importedFunctions = lib.mapAttrs' (name: _: 
+    let 
+      cleanName = lib.removeSuffix ".nix" name;
+    in 
+    lib.nameValuePair cleanName (import (functionsDir + "/${name}"))
+  ) nixFiles;
+in
+{
+  # 1. Define the interface options for users of your flakeModule
+  options.perSystem = lib.mkOption {
+    type = lib.types.submodule {
+      options.ExtraBuilders = lib.mkOption {
+        type = lib.types.attrsOf lib.types.raw;
+        default = {};
+        description = "Automatically discovered extra builder functions.";
+      };
+    };
+  };
+
+  # 2. Automatically inject the imported functions into the default value
+  config.perSystem.ExtraBuilders = importedFunctions;
+}
