@@ -10,28 +10,29 @@
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}:
-    let 
-Builders =  import ./functions/default.nix;
-    in
+  outputs = inputs @ {
+    flake-parts,
+    ...
+  }: let
+    Builders = import ./functions/default.nix;
+  in
     flake-parts.lib.mkFlake {inherit inputs;} {
-      # systems = ["x86_64-linux"];
-
       flake.flakeModules.default = Builders;
-     imports = [ Builders ];
+      # systems = ["x86_64-linux"];
+      imports = [Builders];
       perSystem = {
         # system,
         config,
         self',
         inputs',
         pkgs,
+        Builders,
         ...
       }: {
         _module.args.stdenv = pkgs.stdenv;
         # Per-system attributes can be defined here. The self' and inputs'
         # module parameters provide easy access to attributes of the same
         # system.
-
       };
       flake = {
         # The usual flake attributes can be defined here, including system-
