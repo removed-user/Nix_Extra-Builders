@@ -1,13 +1,19 @@
+# flakeModule.nix
 {
-  perSystem = {
-    lib,
-    flake-parts-lib,
-    ...
-  }: {
-    _module.args.Builders = {
-      MkMakeBuilder = import ./Builders/MkMakeBuilder.nix;
-      MkMesonPkg = import ./Builders/MkMesonPkg.nix;
-      MkArchive = import ./Builders/MkArchive.nix;
+  lib,
+  config,
+  ...
+}: let
+  # Import your utility file and pass it lib
+  loadBuilders = import ./lib/function_importer.nix {inherit lib;};
+in {
+  imports = [./config.nix];
+
+  config.perSystem = {pkgs, ...}: {
+    ExtraBuilders = loadBuilders {
+      functionsDir = ./Builders;
+      inherit pkgs;
+      allConfigs = config.perSystem.buildersConfig;
     };
   };
 }
