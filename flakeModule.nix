@@ -5,7 +5,7 @@
   ...
 }: let
   # Import your utility file and pass it lib
-  loadBuilders = import ./lib/function_importer.nix {inherit lib;};
+  loadBuilders = lib.importApply ./lib/function_importer.nix {inherit lib;};
 in {
   imports = [./config.nix];
 
