@@ -1,5 +1,8 @@
 # modules/lib/make-builder.nix
-{lib, ...}: {
+{
+  pkgs,
+  cfg,
+}: {lib, ...}: {
   # Register the helper function into the dendritic top-level option tree
   options.flake.lib.mkMakePkg = lib.mkOption {
     type = lib.types.raw;

@@ -1,4 +1,7 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  cfg,
+}: {lib, ...}: let
   # Reusable function for cross-distribution tarballs
   MkArchPkg = pkg:
     pkgs.stdenv.mkDerivation {

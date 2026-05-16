@@ -1,5 +1,8 @@
 # Find how to properly propogate flake inputs into each of the builder modules
-{pkgs, ...}: let
+{
+  pkgs,
+  cfg,
+}: {lib, ...}: let
   # Abstract definition using standard function currying
   mkMesonPkg = attrs:
     pkgs.stdenv.mkDerivation (finalAttrs:
