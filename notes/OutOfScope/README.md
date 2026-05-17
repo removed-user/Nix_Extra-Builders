@@ -27,3 +27,9 @@ testing, and building those expressions
 Converting 400+ packages to locally-built nix packages, and vice versa... 
 Using nix to create metadata/"build files" for a native packaging system
 Build that package and archive it, ready for install
+
+# Impractical
+Of course this is Impractical when it comes to actually installing all of those packages, I wouldn't trust that a few packages crammed through a series of functions like that would turn out perfectly, without review...
+
+but this could still be an extremely usefull way to leverage the already existing source code to generate and customize builder functions for individual packages... and 
+To make it easier to transition to a functional build system/create isolated instructions for each seperate package
