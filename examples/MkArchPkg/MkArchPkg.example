@@ -1,0 +1,4 @@
+# Add nix code here for a MkArchPkg example
+# Ie: application of the function to a package/function which generates a package - derivation
+# use a stdenv.mkDerivation, rather than any local builder functions.
+# Ensuring seperation of concerns, so if ever a local function breaks it doesn't break this one too
