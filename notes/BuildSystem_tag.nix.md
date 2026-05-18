@@ -1,5 +1,5 @@
-> An attribute value to put in default;
-> Which serves as a tag if/when you want to route a "simple" package build to the proper builder.
+# An attribute value to put in default: Which serves as a tag
+> if/when you want to route a "simple" package build to the proper builder.
 > Ie: The pname.nix files won't have to have full MkMesonPkg definitions, but simply - be
 > an attribute set specifying the build options+buildinputs.
 > A packagename.nix file with this attribute runs the default build function on the source with those values,
