@@ -4,7 +4,7 @@
   config,
   ...
 }: let
-  # Import your utility file and pass it lib
+  # Import an importer file and pass it flake-pkgs-lib
   loadBuilders = lib.importApply ./lib/function_importer.nix {inherit lib;};
 in {
   imports = [./config.nix];
