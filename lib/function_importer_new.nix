@@ -1,14 +1,26 @@
-{ lib, flake-parts-lib, }: { functionsDir, OptionDeclsDir, defaultOptionDeclsFile, pkgs, }:
-let
+{
+  lib,
+  flake-parts-lib,
+}: {
+  functionsDir,
+  OptionDeclsDir,
+  defaultOptionDeclsFile,
+  pkgs,
+}: let
   inherit (flake-parts-lib) importApply;
 
   # 1. Discover all Nix files in the directory
-  discoveredNixFiles = lib.filterAttrs 
-    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName) 
+  discoveredNixFiles =
+    lib.filterAttrs
+    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName)
     (builtins.readDir functionsDir);
 
   # 2. Define a unified schema for each builder using only option declarations
-  builderSubmodule = { name, config, ... }: let
+  builderSubmodule = {
+    name,
+    config,
+    ...
+  }: let
     # Extract the base file name from the attribute key (e.g., "builder.nix" -> "builder")
     fileName = lib.removeSuffix ".nix" name;
     functionFile = functionsDir + "/${name}";
@@ -26,16 +38,20 @@ let
         description = "Merged Options Schema for this specific builder.";
         default = lib.mkMerge [
           (import defaultOptionDeclsFile)
-          (if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {})
+          (
+            if builtins.pathExists scopedOptionDeclsFile
+            then import scopedOptionDeclsFile
+            else {}
+          )
         ];
       };
 
       builderOutputModule = lib.mkOption {
         type = lib.types.deferredModule;
         description = "The parameterized output module generated via importApply.";
-        default = importApply functionFile { 
-          inherit pkgs; 
-          cfg = config.builderOptionsSchema; 
+        default = importApply functionFile {
+          inherit pkgs;
+          cfg = config.builderOptionsSchema;
         };
       };
     };
@@ -52,9 +68,9 @@ let
       }
     ];
   };
-
 in
   # 4. Map the unified evaluation into your desired final output format
   lib.mapAttrs (name: builderScope: {
     inherit (builderScope) builderName builderOptionsSchema builderOutputModule;
-  }) evaluatedTopLevel.config.builders
+  })
+  evaluatedTopLevel.config.builders
