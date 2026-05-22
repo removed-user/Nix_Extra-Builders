@@ -21,8 +21,8 @@
       in 
         importer {
           functionsDir = ./. + "/functions";
-          configsDir = ./. + "/configs";
-          defaultConfigFile = ./default-config.nix;
+          OptionDeclsDir = ./. + "/configs";
+          defaultOptionDeclsFile = ./default-config.nix;
           inherit pkgs;
         };
     });

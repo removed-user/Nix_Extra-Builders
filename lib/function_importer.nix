@@ -3,8 +3,8 @@
   flake-parts-lib,
 }: {
   functionsDir,
-  configsDir,
-  defaultConfigFile,
+  OptionDeclsDir,
+  defaultOptionDeclsFile,
   pkgs,
 }: let
   inherit (flake-parts-lib) importApply;
@@ -39,11 +39,11 @@
 
     config = let
       functionFile = functionsDir + "/${fileName}.nix";
-      scopedConfigFile = configsDir + "/${name}.nix";
+      scopedConfigFile = OptionDeclsDir + "/${name}.nix";
     in {
       # Layer configurations safely using standard module merging
       builderOptionsSchema = lib.mkMerge [
-        (import defaultConfigFile)
+        (import defaultOptionDeclsFile)
         (
           if builtins.pathExists scopedConfigFile
           then import scopedConfigFile

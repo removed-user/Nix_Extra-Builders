@@ -1,6 +1,6 @@
 # importer.nix
 { lib, flake-parts-lib }:
-{ functionsDir, configsDir, defaultConfigFile, pkgs }:
+{ functionsDir, OptionDeclsDir, defaultOptionDeclsFile, pkgs }:
 let
   inherit (flake-parts-lib) importApply;
   
@@ -27,7 +27,7 @@ let
 
     config = {
       cfg = lib.mkMerge [
-        (import defaultConfigFile)
+        (import defaultOptionDeclsFile)
         (if builtins.pathExists runtimePaths.scopedConfigFile then import runtimePaths.scopedConfigFile else { })
       ];
 
@@ -45,7 +45,7 @@ builtins.map (name:
   let
     cleanName = lib.removeSuffix ".nix" name;
     functionFile = functionsDir + "/${name}";
-    scopedConfigFile = configsDir + "/${cleanName}.nix";
+    scopedConfigFile = OptionDeclsDir + "/${cleanName}.nix";
     
     # Isolated module system invocation
     evaluated = lib.modules.evalModules {

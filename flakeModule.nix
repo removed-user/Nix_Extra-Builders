@@ -1,9 +1,5 @@
 # flakeModule.nix
-{
-  lib,
-  config,
-  ...
-}: let
+{lib, ...}: let
   # Import an importer file and pass it flake-parts-lib
   loadBuilders = lib.importApply ./lib/function_importer.nix {inherit lib;};
 in {
@@ -12,10 +8,9 @@ in {
   config.perSystem = {pkgs, ...}: {
     ExtraBuilders = loadBuilders {
       functionsDir = ./Builders;
-      configsDir = ./lib/OptionsDeclarations/PerFunction;
-      defaultConfigFile = ./lib/OptionsDeclarations/AllFunctions.nix;
+      OptionDeclsDir = ./lib/OptionsDeclarations/PerFunction;
+      defaultOptionDeclsFile = ./lib/OptionsDeclarations/AllFunctions.nix;
       inherit pkgs;
-      allConfigs = config.perSystem.buildersConfig;
     };
   };
 }
