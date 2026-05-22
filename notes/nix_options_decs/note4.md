@@ -11,9 +11,8 @@ let
 
   # 2. Define the schema function. 
   # Takes the file paths via BuilderConfiguration, then returns a standard module.
-  builderModuleSchema = BuilderConfiguration: 
+  builderModuleSchema = BuilderConfiguration:
     # Natively pull 'config' from the module system's internal fixed-point.
-    # This replaces the confusing outer loop inherit line.
     { config, ... }: {
       options = {
         builderName = lib.mkOption { type = lib.types.str; };
