@@ -1,6 +1,6 @@
 # importer.nix
 { lib, flake-parts-lib }: 
-{ functionsDir, pkgs, allConfigs }:
+{ functionsDir, pkgs, allConfigs, configsDir }:
 let
   inherit (flake-parts-lib) importApply;
 
