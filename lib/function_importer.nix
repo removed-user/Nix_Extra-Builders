@@ -1,29 +1,35 @@
-{ lib, flake-parts-lib }:
-{ functionsDir, configsDir, defaultConfigFile, pkgs }:
-let
+{
+  lib,
+  flake-parts-lib,
+}: {
+  functionsDir,
+  configsDir,
+  defaultConfigFile,
+  pkgs,
+}: let
   inherit (flake-parts-lib) importApply;
 
   # 1. Discover all Nix files in the directory
-  discoveredNixFiles = lib.filterAttrs 
-    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName) 
+  discoveredNixFiles =    lib.filterAttrs    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName)
     (builtins.readDir functionsDir);
 
-  # 2. Define a clean, unified schema for each builder
-  builderSubmodule = { name, config, ... }: {
+  # 2. Define a unified schema for each builder
+  builderSubmodule = {
+    name,
+    config,
+    ...
+  }: {
     options = {
       builderName = lib.mkOption {
         type = lib.types.str;
         default = name;
-        description = "The clean name of the builder.";
+        description = "The name of the builder.";
       };
-      builderCfg = lib.mkOption {
+      builderOptionsSchema = lib.mkOption {
         type = lib.types.submodule {
-          options = {
-            packagePath = lib.mkOption { type = lib.types.nullOr lib.types.str; default = null; };
-            packageArgs = lib.mkOption { type = lib.types.attrs; default = { }; };
           };
         };
-        description = "Merged configurations for this specific builder.";
+        description = "Merged Options Schema for this specific builder.";
       };
       builderOutputModule = lib.mkOption {
         type = lib.types.deferredModule;
@@ -32,13 +38,17 @@ let
     };
 
     config = let
-      functionFile = functionsDir + "/${name}.nix";
+      functionFile = functionsDir + "/${fileName}.nix";
       scopedConfigFile = configsDir + "/${name}.nix";
     in {
       # Layer configurations safely using standard module merging
-      builderCfg = lib.mkMerge [
+      builderOptionsSchema = lib.mkMerge [
         (import defaultConfigFile)
-        (if builtins.pathExists scopedConfigFile then import scopedConfigFile else { })
+        (
+          if builtins.pathExists scopedConfigFile
+          then import scopedConfigFile
+          else {}
+        )
       ];
 
       # Bind evaluated config directly into the target function file
@@ -56,15 +66,14 @@ let
         options.builders = lib.mkOption {
           type = lib.types.attrsOf (lib.types.submodule builderSubmodule);
         };
-        config.builders = lib.mapAttrs (fileName: _: { }) discoveredNixFiles;
+        config.builders = lib.mapAttrs (fileName: _: {}) discoveredNixFiles;
       }
     ];
   };
-
 in
-# 4. Map the unified evaluation into your desired final output format
-lib.mapAttrs (name: builderScope: {
-  inherit (builderScope) builderName builderCfg builderOutputModule;
-  options = builderScope._module.args.options; 
-}) evaluatedTopLevel.config.builders
-
+  # 4. Map the unified evaluation into your desired final output format
+  lib.mapAttrs (name: builderScope: {
+    inherit (builderScope) builderName builderOptionsSchema builderOutputModule;
+    options = builderScope._module.args.options;
+  })
+  evaluatedTopLevel.config.builders
