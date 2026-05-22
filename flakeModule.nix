@@ -4,7 +4,7 @@
   config,
   ...
 }: let
-  # Import an importer file and pass it flake-pkgs-lib
+  # Import an importer file and pass it flake-parts-lib
   loadBuilders = lib.importApply ./lib/function_importer.nix {inherit lib;};
 in {
   imports = [./config.nix];
@@ -12,6 +12,7 @@ in {
   config.perSystem = {pkgs, ...}: {
     ExtraBuilders = loadBuilders {
       functionsDir = ./Builders;
+ConfigsDir = ./Builders/OptionsDeclarations;
       inherit pkgs;
       allConfigs = config.perSystem.buildersConfig;
     };
