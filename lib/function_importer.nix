@@ -39,14 +39,14 @@
 
     config = let
       functionFile = functionsDir + "/${fileName}.nix";
-      scopedConfigFile = OptionDeclsDir + "/${name}.nix";
+      scopedOptionDeclsFile = OptionDeclsDir + "/${name}.nix";
     in {
       # Layer configurations safely using standard module merging
       builderOptionsSchema = lib.mkMerge [
         (import defaultOptionDeclsFile)
         (
-          if builtins.pathExists scopedConfigFile
-          then import scopedConfigFile
+          if builtins.pathExists scopedOptionDeclsFile
+          then import scopedOptionDeclsFile
           else {}
         )
       ];
