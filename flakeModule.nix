@@ -12,7 +12,8 @@ in {
   config.perSystem = {pkgs, ...}: {
     ExtraBuilders = loadBuilders {
       functionsDir = ./Builders;
-configsDir = ./Builders/OptionsDeclarations;
+      configsDir = ./lib/OptionsDeclarations/PerFunction;
+      defaultConfigFile = ./lib/OptionsDeclarations/AllFunctions.nix;
       inherit pkgs;
       allConfigs = config.perSystem.buildersConfig;
     };
