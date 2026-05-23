@@ -38,9 +38,7 @@
         description = "Merged Options Schema for this specific builder.";
          imports = [ 
           (import defaultOptionDeclsFile)
-          (
-            if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {}
-          )
+          (if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {})
         ];
       };
 
