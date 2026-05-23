@@ -41,7 +41,6 @@
           (
             if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {}
           )
-];
         ];
       };
 
