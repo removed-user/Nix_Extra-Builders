@@ -22,9 +22,9 @@
     ...
   }: let
     # Extract the base file name from the attribute key (e.g., "builder.nix" -> "builder")
-    fileName = lib.removeSuffix ".nix" name;
+    functionName = lib.removeSuffix ".nix" name;
     functionFile = functionsDir + "/${name}";
-    scopedOptionDeclsFile = OptionDeclsDir + "/${fileName}.nix";
+    scopedOptionDeclsFile = OptionDeclsDir + "/${functionName}.nix";
   in {
     options = {
       builderName = lib.mkOption {
@@ -36,13 +36,14 @@
       builderOptionsSchema = lib.mkOption {
         type = lib.types.submodule;
         description = "Merged Options Schema for this specific builder.";
-        default = lib.mkMerge [
+         imports [ 
           (import defaultOptionDeclsFile)
           (
             if builtins.pathExists scopedOptionDeclsFile
             then import scopedOptionDeclsFile
             else {}
           )
+];
         ];
       };
 
