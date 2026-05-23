@@ -39,9 +39,7 @@
          imports [ 
           (import defaultOptionDeclsFile)
           (
-            if builtins.pathExists scopedOptionDeclsFile
-            then import scopedOptionDeclsFile
-            else {}
+            if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {}
           )
 ];
         ];
