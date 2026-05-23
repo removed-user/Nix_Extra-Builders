@@ -34,8 +34,8 @@
       };
 
       builderOptionsSchema = lib.mkOption {
-        type = lib.types.submodule;
         description = "Merged Options Schema for this specific builder.";
+        type = lib.types.submodule;
          imports = [ 
           (import defaultOptionDeclsFile)
           (if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {})
