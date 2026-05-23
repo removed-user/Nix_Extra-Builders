@@ -29,7 +29,7 @@
     options = {
       builderName = lib.mkOption {
         type = lib.types.str;
-        default = name;
+        default = functionName;
         description = "The name of the builder.";
       };
 
