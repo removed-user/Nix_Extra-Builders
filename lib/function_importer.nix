@@ -36,11 +36,11 @@
       builderOptionsSchema = lib.mkOption {
         description = "Merged Options Schema for this specific builder.";
         type = lib.types.submodule;
-default = {}; # initialize Empty
          imports = [ 
             defaultOptionDeclsFile
           ] ++ lib.optional (builtins.pathExists scopedOptionDeclsFile) scopedOptionDeclsFile;
-      };
+default = {}; # initialize Empty
+};
 
       builderOutputModule = lib.mkOption {
         type = lib.types.deferredModule;
