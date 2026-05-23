@@ -38,9 +38,8 @@
         type = lib.types.submodule;
 default = {}; # initialize Empty
          imports = [ 
-          (import defaultOptionDeclsFile)
-          (if builtins.pathExists scopedOptionDeclsFile then import scopedOptionDeclsFile else {})
-        ];
+            defaultOptionDeclsFile
+          ] ++ lib.optional (builtins.pathExists scopedOptionDeclsFile) scopedOptionDeclsFile;
       };
 
       builderOutputModule = lib.mkOption {
