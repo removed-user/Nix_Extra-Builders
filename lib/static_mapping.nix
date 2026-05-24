@@ -19,7 +19,6 @@ _scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile t
       # Seed values passed as a raw attribute set directly to the submodule default template
       BuilderName = BuilderName;
       _scopedOptionDeclsFile = _scopedOptionDeclsFile;
-  
       builderOptionsSchema = {}; 
     }
   ) discoveredNixFiles;
