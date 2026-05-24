@@ -30,24 +30,7 @@ let
         type = lib.types.str; 
         # Safely extracts the default value from the static metadata map seed
         default = staticPerFunctionOptionsSchema.${BuilderName}; 
-      }; 
-
-      # Hidden structural internal options used for mapping
-      _scopedOptionDeclsFile = lib.mkOption { 
-        type = lib.types.str; 
-        internal = true; 
-        default = staticPerFunctionOptionsSchema.${BuilderName}._scopedOptionDeclsFile; 
       };
-      
-      _hasScopedDecls = lib.mkOption { 
-        type = lib.types.bool; 
-        internal = true; 
-        default = staticPerFunctionOptionsSchema.${BuilderName}._hasScopedDecls;
-      };
-
-      builderOutputModule = lib.mkOption { 
-        type = lib.types.deferredModule; 
-        description = "Pure options schema module for downstream injection."; 
         
         default = { ... }: {
           options = {
