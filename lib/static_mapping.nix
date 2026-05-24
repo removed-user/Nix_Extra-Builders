@@ -12,12 +12,12 @@ let
   staticPerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
     let 
       BuilderName = lib.removeSuffix ".nix" fileName;
-      declPath = (toString OptionDeclsDir) + "/${BuilderName}.nix";
+      _scopedOptionDeclsFile = (toString OptionDeclsDir) + "/${BuilderName}.nix";
     in {
       # We define these as static configurations that seed the submodule
       BuilderName = BuilderName;
-      _scopedOptionDeclsFile = declPath;
-      _hasScopedDecls = builtins.pathExists declPath;
+      _scopedOptionDeclsFile = _scopedOptionDeclsFile;
+      _hasScopedDecls = builtins.pathExists _scopedOptionDeclsFile;
       builderOptionsSchema = {}; 
     }
   ) discoveredNixFiles;
