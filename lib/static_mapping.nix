@@ -15,16 +15,15 @@ let
       _scopedOptionDeclsFile = (toString OptionDeclsDir) + "/${BuilderName}.nix";
     in {
       # We define these as static configurations that seed the submodule
-      BuilderName = BuilderName;
-      _scopedOptionDeclsFile = _scopedOptionDeclsFile;
-      _hasScopedDecls = builtins.pathExists _scopedOptionDeclsFile;
+ config.BuilderName = BuilderName;
+ config._scopedOptionDeclsFile = _scopedOptionDeclsFile;
+config._hasScopedDecls = builtins.pathExists _scopedOptionDeclsFile;
       builderOptionsSchema = {}; 
     }
   ) discoveredNixFiles;
 
   # 3. Submodule schema directly extracts the top-level pre-calculated matrix values
-  builderSubmodule = { config, ... }: { 
-    options = { 
+  builderSubmodule = options = { 
       BuilderName = lib.mkOption { 
         type = lib.types.str; 
         default = config.BuilderName; # Pulls directly from pre-evaluated matrix
@@ -40,7 +39,7 @@ let
         
         default = { ... }: {
           options = {
-            builders.${config.BuilderName} = {
+            builders.${options.BuilderName} = {
               imports = [ defaultOptionDeclsFile ] 
                 ++ lib.optional config._hasScopedDecls config._scopedOptionDeclsFile; 
             };
