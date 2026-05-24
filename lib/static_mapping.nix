@@ -13,7 +13,8 @@ let
   staticPerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
     let 
       BuilderName = lib.removeSuffix ".nix" fileName;
-      _scopedOptionDeclsFile = (toString OptionDeclsDir) + "/${BuilderName}.nix";
+  _expectedScopedOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
+_scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile then _expectedScopedOptionDeclsFile else {};
     in {
       # Seed values passed as a raw attribute set directly to the submodule default template
       BuilderName = BuilderName;
