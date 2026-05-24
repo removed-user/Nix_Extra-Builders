@@ -36,13 +36,13 @@ let
       _scopedOptionDeclsFile = lib.mkOption { 
         type = lib.types.str; 
         internal = true; 
-        default = config._scopedOptionDeclsFile; 
+        default = staticPerFunctionOptionsSchema.${name}._scopedOptionDeclsFile; 
       };
       
       _hasScopedDecls = lib.mkOption { 
         type = lib.types.bool; 
         internal = true; 
-        default = config._hasScopedDecls; 
+        default = staticPerFunctionOptionsSchema.${name}._hasScopedDecls;
       };
 
       builderOutputModule = lib.mkOption { 
