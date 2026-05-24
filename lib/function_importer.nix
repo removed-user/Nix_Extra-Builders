@@ -18,7 +18,8 @@
   # 2. Define a unified schema for each builder using only option declarations
   builderSubmodule = {
     name,
-    config,
+    # config,
+    pkgs,
     ...
   }: let
     # Extract the base file name from the attribute key (e.g., "builder.nix" -> "builder")
@@ -50,7 +51,6 @@
         description = "The parameterized output module generated via importApply.";
         default = importApply functionFile {
           inherit pkgs;
-          cfg = config.builderOptionsSchema;
         };
       };
     };
@@ -60,10 +60,10 @@
   evaluatedTopLevel = lib.modules.evalModules {
     modules = [
       {
-        options.builders = lib.mkOption {
+        options.Builders = lib.mkOption {
           type = lib.types.attrsOf (lib.types.submodule builderSubmodule);
         };
-        config.builders = lib.mapAttrs (fileName: _: {}) discoveredNixFiles;
+        default = lib.mapAttrs (fileName: _: {}) discoveredNixFiles;
       }
     ];
   };
