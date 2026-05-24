@@ -9,7 +9,7 @@ let
     (builtins.readDir functionsDir); 
 
   # 2. Pre-evaluated, fully populated static metadata map
-  static PerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
+  staticPerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
     let 
       BuilderName = lib.removeSuffix ".nix" fileName;
       declPath = (toString OptionDeclsDir) + "/${BuilderName}.nix";
@@ -53,7 +53,7 @@ in {
   # 4. Bind the default values directly to the static mapping
   options.builders = lib.mkOption { 
     type = lib.types.lazyAttrsOf (lib.types.submodule builderSubmodule); 
-    default = PerFunctionOptionsSchema; 
+    default = staticPerFunctionOptionsSchema; 
     description = "Dynamically discovered and declared builder schemas."; 
   }; 
 }
