@@ -15,7 +15,7 @@ let
       declPath = (toString OptionDeclsDir) + "/${BuilderName}.nix";
     in {
       # We define these as static configurations that seed the submodule
-      builderName = BuilderName;
+      BuilderName = BuilderName;
       _scopedOptionDeclsFile = declPath;
       _hasScopedDecls = builtins.pathExists declPath;
       builderOptionsSchema = {}; 
@@ -25,9 +25,9 @@ let
   # 3. Submodule schema directly extracts the top-level pre-calculated matrix values
   builderSubmodule = { config, ... }: { 
     options = { 
-      builderName = lib.mkOption { 
+      BuilderName = lib.mkOption { 
         type = lib.types.str; 
-        default = config.builderName; # Pulls directly from pre-evaluated matrix
+        default = config.BuilderName; # Pulls directly from pre-evaluated matrix
       }; 
 
       # Hidden structural internal options used for mapping
@@ -40,7 +40,7 @@ let
         
         default = { ... }: {
           options = {
-            builders.${config.builderName} = {
+            builders.${config.BuilderName} = {
               imports = [ defaultOptionDeclsFile ] 
                 ++ lib.optional config._hasScopedDecls config._scopedOptionDeclsFile; 
             };
