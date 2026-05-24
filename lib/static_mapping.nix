@@ -17,8 +17,10 @@ let
 _scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile then _expectedScopedOptionDeclsFile else {};
     in {
       # Seed values passed as a raw attribute set directly to the submodule default template
-      BuilderName = BuilderName;
-      _scopedOptionDeclsFile = _scopedOptionDeclsFile;
+inherit _scopedOptionDeclsFile BuilderName;
+
+    #  BuilderName = BuilderName;
+  #    _scopedOptionDeclsFile = _scopedOptionDeclsFile;
       builderOptionsSchema = {}; 
     }
   ) discoveredNixFiles;
