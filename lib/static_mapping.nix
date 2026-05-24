@@ -19,7 +19,7 @@ _scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile t
       # Seed values passed as a raw attribute set directly to the submodule default template
       BuilderName = BuilderName;
       _scopedOptionDeclsFile = _scopedOptionDeclsFile;
-      _hasScopedDecls = builtins.pathExists _scopedOptionDeclsFile;
+  
       builderOptionsSchema = {}; 
     }
   ) discoveredNixFiles;
@@ -38,7 +38,7 @@ _scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile t
             # Safely referencing the value via the validated options/config context
             builders.${options.BuilderName.value} = {
               imports = [ defaultOptionDeclsFile ] 
-                ++ lib.optional config._hasScopedDecls config._scopedOptionDeclsFile; 
+                ++ [ _scopedOptionDeclsFile ];
             };
           };
         }; 
