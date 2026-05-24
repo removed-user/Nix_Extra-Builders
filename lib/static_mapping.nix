@@ -11,11 +11,11 @@ let
   # 2. Pre-evaluated, fully populated static metadata map
   staticBuildersSchemaDefaults = lib.mapAttrs (fileName: _: 
     let 
-      nameClean = lib.removeSuffix ".nix" fileName;
-      declPath = (toString OptionDeclsDir) + "/${nameClean}.nix";
+      BuilderName = lib.removeSuffix ".nix" fileName;
+      declPath = (toString OptionDeclsDir) + "/${BuilderName}.nix";
     in {
       # We define these as static configurations that seed the submodule
-      builderName = nameClean;
+      builderName = BuilderName;
       _scopedOptionDeclsFile = declPath;
       _hasScopedDecls = builtins.pathExists declPath;
       builderOptionsSchema = {}; 
