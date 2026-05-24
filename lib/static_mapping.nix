@@ -29,7 +29,7 @@ let
       BuilderName = lib.mkOption { 
         type = lib.types.str; 
         # Safely extracts the default value from the static metadata map seed
-        default = config.BuilderName; 
+        default = BuilderName; 
       }; 
 
       # Hidden structural internal options used for mapping
