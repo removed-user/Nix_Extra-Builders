@@ -9,7 +9,6 @@ let
     (lib.readDir functionsDir); 
 
   # 2. Pre-evaluated, static metadata map
-  # In a literal attribute set, keys are flat names, not paths like `config.foo`
   staticPerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
     let 
       BuilderName = lib.removeSuffix ".nix" fileName;
