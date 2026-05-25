@@ -6,7 +6,7 @@ let
   # 1. Discover files
   discoveredNixFiles = lib.filterAttrs 
     (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName) 
-    (builtins.readDir functionsDir); 
+    (lib.readDir functionsDir); 
 
   # 2. Pre-evaluated, static metadata map
   # In a literal attribute set, keys are flat names, not paths like `config.foo`
@@ -14,7 +14,7 @@ let
     let 
       BuilderName = lib.removeSuffix ".nix" fileName;
   _expectedScopedOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
-_scopedOptionDeclsFile = if builtins.pathExists _expectedScopedOptionDeclsFile then _expectedScopedOptionDeclsFile else {};
+_scopedOptionDeclsFile = if lib.pathExists _expectedScopedOptionDeclsFile then _expectedScopedOptionDeclsFile else {};
     in {
       # Seed values passed as a raw attribute set directly to the submodule default template
 inherit _scopedOptionDeclsFile BuilderName;
