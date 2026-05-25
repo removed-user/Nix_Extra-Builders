@@ -1,5 +1,7 @@
 # Example Usage
 
+## Not Ready, dont use unless you want errors
+
 `flake.nix`
 
 >`Add to inputs`
