@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   /**
-    Evaluates a worker function with the provided metadata and stores the result
+    Evaluates a worker function with the provided input data and stores the result
     under a dynamically named key in an attribute set.
 
     # Type
@@ -51,13 +51,13 @@ let
     seedData = inputData;
   };
 
-  # 3. The payload: Stored under the dynamic name as requested
+  # 3. The payload: Stored under the dynamic %{name}
   results = {
     "${name}" = evaluationResult;
   };
 }
 
 in {
-  # Your MetaPerFunction block can now call this safely
+  # Add to scope
   inherit evaluateAndStore;
 }
