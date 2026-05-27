@@ -42,8 +42,20 @@ let
         "evaluateAndStore: The workerFunction failed to return an attribute set. Got a ${builtins.typeOf evaluationResult}.";
 
       {
-        "${name}" = evaluationResult;
-      };
+  # 1. Metadata about the evaluation type
+  type = builtins.typeOf evaluationResult;
+
+  # 2. Traceability: Exactly what was given to the evaluator
+  inputs = {
+    targetName = name;
+    seedData = inputData;
+  };
+
+  # 3. The payload: Stored under the dynamic name as requested
+  results = {
+    "${name}" = evaluationResult;
+  };
+}
 
 in {
   # Your MetaPerFunction block can now call this safely
