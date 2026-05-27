@@ -3,9 +3,9 @@
   flake-parts-lib,
   ...
 }: let
-  functionsDir = ../Builders;
 
   # 1. Discover files
+  functionsDir = ../Builders;
   functionFiles =
     lib.filterAttrs
     (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName)
@@ -15,21 +15,21 @@
   MetaPerFunction =
     lib.mapAttrs (
       fileName: _: let
-        defaultOptionDeclsFile = ./OptionsDeclarations/AllFunctions.nix;
         OptionDeclsDir = ./OptionsDeclarations/PerFunction;
+metaForSubModuleBuilder = {
+        defaultOptionDeclsFile = ./OptionsDeclarations/AllFunctions.nix;
         perFunctionOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
         BuilderName = lib.removeSuffix ".nix" fileName;
+    };
       in {
-        # Seed values passed as a raw attribute set directly to the submodule default template
-
-        ${BuilderName}.options = {
-          modules = [defaultOptionDeclsFile perFunctionOptionDeclsFile];
-        };
+        # Seed values passed as an attribute set directly to the submodule generator function
+        metaForSubModuleBuilder =  metaForSubModuleBuilder;
       }
-    )
-    functionFiles;
+    ) functionFiles;
 
-  # 3. Submodule schema correctly accepting config and options as arguments
+
+  # 3. Submodule schema factory
+makeBuilderSubmodule {metaForSubModuleBuilder, ... }:
   builderSubmodule = {
     config,
     options,
