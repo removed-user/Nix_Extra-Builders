@@ -1,55 +1,61 @@
-{ lib, flake-parts-lib, }: 
-{ functionsDir, OptionDeclsDir, defaultOptionDeclsFile, pkgs, }: 
-let 
-  inherit (flake-parts-lib) importApply; 
+{
+  lib,
+  flake-parts-lib,
+  ...
+}: let
+  functionsDir = ../Builders;
 
   # 1. Discover files
-  discoveredNixFiles = lib.filterAttrs 
-    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName) 
-    (lib.readDir functionsDir); 
+  functionFiles =
+    lib.filterAttrs
+    (fileName: fileType: fileType == "regular" && lib.hasSuffix ".nix" fileName)
+    (lib.readDir functionsDir);
 
   # 2. Pre-evaluated, static metadata map
-  staticPerFunctionOptionsSchema = lib.mapAttrs (fileName: _: 
-    let 
-      BuilderName = lib.removeSuffix ".nix" fileName;
-  _expectedScopedOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
-_scopedOptionDeclsFile = if lib.pathExists _expectedScopedOptionDeclsFile then _expectedScopedOptionDeclsFile else {};
-    in {
-      # Seed values passed as a raw attribute set directly to the submodule default template
-inherit _scopedOptionDeclsFile BuilderName;
+  MetaPerFunction =
+    lib.mapAttrs (
+      fileName: _: let
+        defaultOptionDeclsFile = ./OptionsDeclarations/AllFunctions.nix;
+        OptionDeclsDir = ./OptionsDeclarations/PerFunction;
+        perFunctionOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
+        BuilderName = lib.removeSuffix ".nix" fileName;
+      in {
+        # Seed values passed as a raw attribute set directly to the submodule default template
 
-    #  BuilderName = BuilderName;
-  #    _scopedOptionDeclsFile = _scopedOptionDeclsFile;
-      builderOptionsSchema = {}; 
-    }
-  ) discoveredNixFiles;
+        ${BuilderName}.options = {
+          modules = [defaultOptionDeclsFile perFunctionOptionDeclsFile];
+        };
+      }
+    )
+    functionFiles;
 
   # 3. Submodule schema correctly accepting config and options as arguments
-  builderSubmodule = { config, options, ... }: { 
-    options = { 
-      BuilderName = lib.mkOption { 
-        type = lib.types.str; 
-        # Safely extracts the default value from the static metadata map seed
-        default = staticPerFunctionOptionsSchema.${BuilderName}; 
-      };
-        
-        default = { ... }: {
+  builderSubmodule = {
+    config,
+    options,
+    ...
+  }: {
+    # builderOptionsSchema
+    options = {
+      ${BuilderName} = lib.mkOption {
+        default = {...}: {
           options = {
             # Safely referencing the value via the validated options/config context
-            builders.${options.BuilderName.value} = {
-              imports = [ defaultOptionDeclsFile ] 
-                ++ [ _scopedOptionDeclsFile ];
+            builders.${BuilderName} = {
+              imports =
+                [defaultOptionDeclsFile]
+                ++ [scopedOptionDeclsFile];
             };
           };
-        }; 
-      }; 
-    }; 
-  }; 
-in { 
+        };
+      };
+    };
+  };
+in {
   # 4. Bind the default values directly to the static mapping
-  options.builders = lib.mkOption { 
-    type = lib.types.lazyAttrsOf (lib.types.submodule builderSubmodule); 
-    default = staticPerFunctionOptionsSchema; 
-    description = "Dynamically discovered and declared builder schemas."; 
-  }; 
+  options.builders = lib.mkOption {
+    type = lib.types.lazyAttrsOf (lib.types.submodule builderSubmodule);
+    default = MetaPerFunction;
+    description = "Dynamically discovered and declared builder schemas.";
+  };
 }
