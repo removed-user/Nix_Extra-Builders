@@ -3,7 +3,6 @@
   flake-parts-lib,
   ...
 }: let
-
   # 1. Discover files
   functionsDir = ../Builders;
   functionFiles =
@@ -12,24 +11,28 @@
     (lib.readDir functionsDir);
 
   # 2. Pre-evaluated, static metadata map
-  MetaPerFunction =
-    lib.mapAttrs (
-      fileName: _: let
-        OptionDeclsDir = ./OptionsDeclarations/PerFunction;
-metaForSubModuleBuilder = {
+  MetaPerFunction = lib.mapAttrs (
+    fileName: _: let
+      OptionDeclsDir = ./OptionsDeclarations/PerFunction;
+      meta = {
         defaultOptionDeclsFile = ./OptionsDeclarations/AllFunctions.nix;
         perFunctionOptionDeclsFile = (toString OptionDeclsDir) + "/${fileName}";
         BuilderName = lib.removeSuffix ".nix" fileName;
-    };
-      in {
-        # Seed values passed as an attribute set directly to the submodule generator function
-        metaForSubModuleBuilder =  metaForSubModuleBuilder;
-      }
-    ) functionFiles;
-
+      };
+    in {
+      # Seed values passed as an attribute set directly to the submodule generator function
+      metaForSubModuleBuilder = meta;
+    }
+  )
+  functionFiles;
 
   # 3. Submodule schema factory
-makeBuilderSubmodule {metaForSubModuleBuilder, ... }:
+  makeBuilderSubmodule = {metaForSubModuleBuilder, ...}: {
+    # defaultOptionDeclsFile
+    # perFunctionOptionDeclsFile
+    # BuilderName
+  };
+
   builderSubmodule = {
     config,
     options,
@@ -37,16 +40,12 @@ makeBuilderSubmodule {metaForSubModuleBuilder, ... }:
   }: {
     # builderOptionsSchema
     options = {
-      ${BuilderName} = lib.mkOption {
-        default = {...}: {
-          options = {
-            # Safely referencing the value via the validated options/config context
-            builders.${BuilderName} = {
-              imports =
-                [defaultOptionDeclsFile]
-                ++ [scopedOptionDeclsFile];
-            };
-          };
+      default = {...}: {
+        # Safely referencing the value via the validated options/config context
+        builders.${BuilderName} = {
+          imports =
+            [defaultOptionDeclsFile]
+            ++ [scopedOptionDeclsFile];
         };
       };
     };
