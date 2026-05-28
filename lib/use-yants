@@ -1,4 +1,15 @@
 https://github.com/divnix/yants
 
+yants.url = "github:divnix/yants"; 
+
 Also, make a list of nix libs you've already checked out -
 and grade them by non-nixos interop
+
+
+_module.args = {
+        myLib = import {
+          # Overlay Yants into lib
+          yants = inputs.yants.lib; 
+        };
+in
+lib =  myLib { inherit yants; };
