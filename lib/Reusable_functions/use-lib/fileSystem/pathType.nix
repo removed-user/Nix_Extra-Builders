@@ -6,3 +6,10 @@ builtins.readFileType /etc
 
 builtins.readFileType /etc/static
 # => "symlink"
+
+returnsOneOf = [ 
+"regular" 
+"directory"
+"symlink"
+"unknown"
+]
