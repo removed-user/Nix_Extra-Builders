@@ -1,0 +1,6 @@
+returnsOneOf = [ 
+"regular" 
+"directory"
+"symlink"
+"unknown"
+]
