@@ -3,14 +3,21 @@
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # nixpkgs-lib.url = "github:NixOS/nixpkgs/nixpkgs-unstable?dir=lib";
+    nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
+    lib.url = "github:nix-community/nixpkgs.lib";
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}: let
+  outputs = inputs @ {
+    flake-parts,
+    lib,
+    ...
+  }: let
     Builders = import ./flakeModule.nix;
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
