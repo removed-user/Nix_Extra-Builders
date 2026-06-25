@@ -5,12 +5,11 @@
 in {
   # imports = [./config.nix];
 
-  config.perSystem = {pkgs, ...}: {
+  config.perSystem = {...}: {
     ExtraBuilders = loadBuilders {
       functionsDir = ./Builders;
       OptionDeclsDir = ./lib/OptionsDeclarations/PerFunction;
       defaultOptionDeclsFile = ./lib/OptionsDeclarations/AllFunctions.nix;
-      inherit pkgs;
     };
   };
 }
